@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"time"
 )
 
 // communication bw goroutines
@@ -47,9 +48,33 @@ func main() {
 
 	// ------------------------------
 
-	doneChannel := make(chan bool)
-	go task(doneChannel)
+	// doneChannel := make(chan bool)
+	// go task(doneChannel)
 
-	received := <-doneChannel
-	fmt.Println("Complete", received)
+	// received := <-doneChannel
+	// fmt.Println("Complete", received)
+
+	// -------------------------------
+	// Buffered Channel (limited amount of data without blocking)
+	doneChannel := make(chan bool)
+
+	emailChannel := make(chan string, 100) // buffered channel )has size, can send 100 elements without blocking
+
+	go emailSender(emailChannel, doneChannel)
+	for i := range 6 {
+		emailChannel <- fmt.Sprintf("%d@gmail.com", i)
+	}
+
+	close(emailChannel)
+
+	<-doneChannel
+
+}
+
+func emailSender(emailChan chan string, doneChannel chan bool) {
+	defer func() { doneChannel <- true }()
+	for email := range emailChan {
+		time.Sleep(time.Second)
+		fmt.Println("Sending email to:", email)
+	}
 }

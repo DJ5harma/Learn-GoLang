@@ -17,6 +17,12 @@ func sumGoRoutine(sumChannel chan int, num1 int, num2 int) {
 	sumChannel <- num1 + num2
 }
 
+func task(doneChannel chan bool) {
+	defer func() { doneChannel <- true }()
+
+	fmt.Println("processing...")
+}
+
 func main() {
 	// wg := sync.WaitGroup{}
 
@@ -29,12 +35,21 @@ func main() {
 	// 	numChan <- rand.Intn(100)
 	// }
 
-	sumChannel := make(chan int)
+	// ------------------------------
 
-	go sumGoRoutine(sumChannel, 5, 4)
+	// sumChannel := make(chan int)
 
-	result := <-sumChannel
+	// go sumGoRoutine(sumChannel, 5, 4)
 
-	fmt.Println("result", result)
+	// result := <-sumChannel
 
+	// fmt.Println("result", result)
+
+	// ------------------------------
+
+	doneChannel := make(chan bool)
+	go task(doneChannel)
+
+	received := <-doneChannel
+	fmt.Println("Complete", received)
 }

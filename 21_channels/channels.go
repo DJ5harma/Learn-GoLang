@@ -2,12 +2,9 @@ package main
 
 import (
 	"fmt"
-	"math/rand"
-	"sync"
-	"time"
 )
 
-// communication queue bw goroutines
+// communication bw goroutines
 
 func processNum(numChan chan int) {
 
@@ -16,16 +13,28 @@ func processNum(numChan chan int) {
 	}
 }
 
+func sumGoRoutine(sumChannel chan int, num1 int, num2 int) {
+	sumChannel <- num1 + num2
+}
+
 func main() {
-	wg := sync.WaitGroup{}
+	// wg := sync.WaitGroup{}
 
-	numChan := make(chan int)
+	// numChan := make(chan int)
 
-	wg.Go(func() { processNum(numChan) })
+	// wg.Go(func() { processNum(numChan) })
 
-	for {
-		time.Sleep(time.Second)
-		numChan <- rand.Intn(100)
-	}
+	// for {
+	// 	time.Sleep(time.Second)
+	// 	numChan <- rand.Intn(100)
+	// }
+
+	sumChannel := make(chan int)
+
+	go sumGoRoutine(sumChannel, 5, 4)
+
+	result := <-sumChannel
+
+	fmt.Println("result", result)
 
 }

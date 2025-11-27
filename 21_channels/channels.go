@@ -54,24 +54,46 @@ func main() {
 	// received := <-doneChannel
 	// fmt.Println("Complete", received)
 
-	// -------------------------------
-	// Buffered Channel (limited amount of data without blocking)
-	doneChannel := make(chan bool)
+	// // -------------------------------
+	// // Buffered Channel (limited amount of data without blocking)
+	// doneChannel := make(chan bool)
 
-	emailChannel := make(chan string, 100) // buffered channel )has size, can send 100 elements without blocking
+	// emailChannel := make(chan string, 100) // buffered channel )has size, can send 100 elements without blocking
 
-	go emailSender(emailChannel, doneChannel)
-	for i := range 6 {
-		emailChannel <- fmt.Sprintf("%d@gmail.com", i)
+	// go emailSender(emailChannel, doneChannel)
+	// for i := range 6 {
+	// 	emailChannel <- fmt.Sprintf("%d@gmail.com", i)
+	// }
+
+	// close(emailChannel)
+
+	// <-doneChannel
+
+	// ------------------------------------------ multi channel listening
+
+	chan1 := make(chan int)
+	chan2 := make(chan string)
+
+	go func() {
+		chan1 <- 10
+	}()
+	go func() {
+		chan2 <- "pong"
+	}()
+
+	for range 2 {
+		select {
+		case chan1Val := <-chan1:
+			fmt.Println("Received data from chan 1", chan1Val)
+		case chan2Val := <-chan2:
+			fmt.Println("Received data from chan 1", chan2Val)
+		}
 	}
-
-	close(emailChannel)
-
-	<-doneChannel
 
 }
 
-func emailSender(emailChan chan string, doneChannel chan bool) {
+// also type safety in channel
+func emailSender(emailChan <-chan string, doneChannel chan<- bool) {
 	defer func() { doneChannel <- true }()
 	for email := range emailChan {
 		time.Sleep(time.Second)

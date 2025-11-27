@@ -86,7 +86,7 @@ func main() {
 		case chan1Val := <-chan1:
 			fmt.Println("Received data from chan 1", chan1Val)
 		case chan2Val := <-chan2:
-			fmt.Println("Received data from chan 1", chan2Val)
+			fmt.Println("Received data from chan 2", chan2Val)
 		}
 	}
 

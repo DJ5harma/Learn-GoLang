@@ -2,10 +2,11 @@ package main
 
 import "fmt"
 
-func printSlice[T comparable](items []T) {
+func printSlice[T comparable, V string](items []T, v V) {
 	for _, item := range items {
 		fmt.Print(item, " ")
 	}
+	fmt.Println(v)
 }
 
 type stack[T string | int] struct {
@@ -17,11 +18,9 @@ func main() {
 	names := []string{"go", "ts", "js", "py"}
 	booleans := []bool{true, false, false, true}
 
-	printSlice(nums)
-	println()
-	printSlice(names)
-	println()
-	printSlice(booleans)
+	printSlice(nums, "NUMS")
+	printSlice(names, "NAMES")
+	printSlice(booleans, "BOOLEANS")
 
 	// stack1 := stack[int]{elements: []int{1, 2, 3}}
 
